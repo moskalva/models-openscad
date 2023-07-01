@@ -12,6 +12,36 @@ translate([
 rotate([0,90,0])
 cylinder(h=box_border_size+collision_spacer*2,d=screen_screw_diameter);
 }
+module button_model() {
+    %
+    union() {
+        translate([0,0,button_body_height/2])
+        cube([actual_button_width,actual_button_width, button_body_height], center = true);
+        
+        translate([0,0,button_body_height])
+        cylinder(h = button_height_offset, d = button_diameter);
+    }
+}
+module button_attach(){
+    union(){
+        translate([0,0,button_attach_width])
+        button_model();
+        
+        difference() {
+            hull(){
+                translate([0,0,button_attach_height-1])
+                cube([actual_button_width-1,button_width+ button_attach_width*2,1],center = true);
+
+                cube([actual_button_width-1,button_width,1],center = true);
+            }
+            
+            translate([0,0,button_height_full/2+button_attach_width])
+            cube([button_width+collision_spacer,button_width,button_height_full+collision_spacer],center = true);
+        }
+
+        
+    }
+}
 
 module upper_vent_hole(){
 translate([
@@ -48,22 +78,40 @@ translate([
 }
 
 module box_whole(){
+    button_position_offset_x=20;
+    button_position_offset_z=30;
     difference(){
         translate([0,0,box_border_size + box_height_inner/2])
-        difference(){
-            minkowski(){
+        union(){
+            difference(){
+                minkowski(){
+                    box_inner();
+                    sphere(r=box_border_size);
+                };
+                
+                // inner
                 box_inner();
-                sphere(r=box_border_size);
-            };
+            }
             
-            // inner
-            box_inner();
+            // display button attachment
+            translate([
+                -box_length_outer/2+button_position_offset_x,
+                -box_width_outer/2+button_attach_height+collision_spacer*2,
+                -box_height_outer/2+button_position_offset_z]) 
+            rotate([90,0,0])
+            button_attach();
         }
+
+        // button hole
+        translate([
+            -box_length_outer/2+button_position_offset_x-button_width/2,
+            -box_width_outer/2,
+            button_position_offset_z-button_width/2 ]) 
+        cube([button_width,box_border_size+collision_spacer*2,button_width],center = false);
         
-        slot_depth = box_border_size+collision_spacer *2;
         
         // sd card slot
-        
+        slot_depth = box_border_size+collision_spacer *2;
         translate([- box_length_outer/2,0,sdcard_slot_height/2 -collision_spacer])
         cylinder(h = sdcard_slot_height, r=sdcard_slot_radius, center= true);
         

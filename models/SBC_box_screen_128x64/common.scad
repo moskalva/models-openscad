@@ -60,3 +60,12 @@ upper_vent_offset=16;
 collision_spacer = 0.1;
 box_lower_height = box_border_size+ board_height+spacer_lower + minijack_diameter;
 
+actual_button_width = 6;
+button_width = actual_button_width+2;
+button_height_offset = 2;
+button_height_full = 5;
+button_holder_height = 2;
+button_diameter = 3;
+button_body_height = button_height_full - button_height_offset;
+button_attach_width = 2;
+button_attach_height = button_height_full+button_attach_width;
